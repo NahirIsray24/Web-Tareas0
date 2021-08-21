@@ -16,7 +16,7 @@ agregar.addEventListener("click", (e) => {
     const check = document.createElement("input"); //creo checkbox de la misma manera q el boton eliminar
     check.setAttribute("type","checkbox");
     eliminar.textContent = "🗑"; //nombre del boton 
-    eliminar.setAttribute("onlick","elimina(this)")//escuchador del evento;
+    eliminar.setAttribute("onlick","eliminar(this)")//escuchador del evento;
     //necesito saber en donde hago click para ellos pasamos por la funcion en el parametro
     li.appendChild(check);
     li.appendChild(parrafo); // El método appendChild() para añadirle a la lista el parrafo
@@ -34,7 +34,7 @@ agregar.addEventListener("click", (e) => {
 });
 
 function eliminar(e) {//la funcion recibe el evento
-  const item = e.target.parentElement;//target hace ref al boton y p no eliminar el boton pero si el texto parentElement el q contiene al item
+  const item = e.parentElement;//target hace ref al boton y p no eliminar el boton pero si el texto parentElement el q contiene al item
   ul.removeChild(item); //lo elimina 
 }
 
