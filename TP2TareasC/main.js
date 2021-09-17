@@ -32,13 +32,18 @@ if (text !== ""){
 //funcion para agregar la tarea con el texto de la tarea
 function agregarTarea(texto,v){
   const nuevoLi= document.createElement("li"); //fuera del body crea un elemento de tipo li
+  let time = new Date().getTime();
+  nuevoLi.setAttribute("data-id", time);
   //este atributo dira lo que va adentro del li (html)
+
+
+  
   nuevoLi.innerHTML= 
     `
-    <input type = "checkbox" >
+    <input type="checkbox" onClick="funcionCheck(this.parentElement)" ${tareas.completado ? 'checked':''};>
     <p> ${texto} </p>
     <button onclick= "eliminarTarea(this)"> 🗑</button>
-    <button onclick= "copiarTarea(this)"> 📄</button>
+    <button onclick= "copiarTarea(this.closest('li'))"> 📄</button>
     <button onclick= "compartirTarea(this)"> ↗ </button>
     `;
   lista.prepend(nuevoLi);
@@ -51,7 +56,7 @@ function agregarTarea(texto,v){
 
   if(v){
     tareas.push({
-      id : Date.now(),
+      id : time,
       "texto": texto, //texto es el parametro de agregar
       "completado": false,
       "ubicacion": {"lat":geo.lat, "lon": geo.lon},
@@ -59,13 +64,41 @@ function agregarTarea(texto,v){
     guardarLocal();
   }
 }
+//metodo para guardar la actualidad de c/tarea
  function guardarLocal(){
    window.localStorage.setItem("tareas", JSON.stringify(tareas));
  }
- function eliminarTarea(e){
+ 
+ /*function eliminarTarea(e) {
   e.parentElement.remove(); //Nodo.parentElement devuelve el nodo padre del DOM y remove elimina
+  let idA= e.closest("li").dataset.id;
+  tareas = tareas.filter(tarea => tarea.id != idA);
+  
+  console.log(tareas);
+  guardarLocal();
+}*/
+function eliminarTarea(nuevoLi) {
+  nuevoLi.parentElement.remove();
+  tareas.splice(tareas.findIndex(a => a.id == nuevoLi.id), 1) 
+  guardarLocal();
+}
+//checkbox
+const funcionCheck = (e) =>{
+  index = tareas.findIndex(tareas => tareas.id == e.target.parentElement.dataset.id);
+  tareas[index].completado = !tareas[index].completado; 
+  localstorage.setItem('tareas', JSON.stringify(tareas));
+  guardarLocal();
+}
+/*const funcionCheck = (e) =>{
+  e.classList.toggle('checked');
+  nuevoLi = e.closest('li');
+  index = tareas.findIndex(a => a.id == nuevoLi.id)
+  tareas[index].completado = tareas[index].completado ? false : true
+  guardarLocal();
+}*/
 
- }
+
+
 
 function copiarTarea(e){
   console.log ("COPIAR");
