@@ -2,60 +2,44 @@ input = document.getElementById("nuevaTarea"); //manipular input para saber el v
 agregar = document.getElementById("guardarTarea"); //boton para añadir una tarea para que cuando haga click ahga algo
 lista = document.getElementById("lista"); //lista donde agregamos todos los elementos 
 screen = document.getElementById("fullScreen"); //constante para el fullScren
+
 let tareas=[]; //declaro el array vacio sin objetos
 let geo= {lat: null, lon: null};
-//es lo mismo que : var lon : null; y var lat: null; en lineas separadas
+
 
 window.onload= function(){
   recuperarUbicacion();
   console.log(geo); //me muestra la ubicacion
 tareas = JSON.parse(localStorage.getItem("tareas")) || []; //en tareas parseo lo que traje en el string 
-//JSON.parse()método analiza una cadena JSON y construye el valor u objeto de JavaScript
 
-//para listar el contenido del arreglo hare un for
 for (let i = 0; i < tareas.length; i++) {
   agregarTarea(tareas[i].texto,false);
 }
 }
 
-//Comportamiento para boton click para que cuando se seleccione traiga el valor que tenemos
-//Paradigma orientado a eventos:
 agregar.addEventListener("click",function(e){//escuchador de eventos
-//cuando suceda el click desata fuction();
 e.preventDefault();
 const text = input.value; //cuando se toque el boton agarrara lo q esta escrito en el input (add taks) y lo guarda en la variable
 if (text !== ""){
   agregarTarea(text,true);//le paso el texto
 }
-
 });
-//funcion para agregar la tarea con el texto de la tarea
 function agregarTarea(texto,v){
   const nuevoLi= document.createElement("li"); //fuera del body crea un elemento de tipo li
   let time = new Date().getTime();
   nuevoLi.setAttribute("data-id", time);
-  //este atributo dira lo que va adentro del li (html)
-
-
-  
   nuevoLi.innerHTML= 
     `
-    <input type="checkbox" onClick="funcionCheck(this.parentElement)" ${tareas.completado ? 'checked':''};>
+    <input type="checkbox" onClick="funcionCheck(this)" ${tareas.completado ? 'checked':''};>
     <p> ${texto} </p>
     <button onclick= "eliminarTarea(this)"> 🗑</button>
     <button onclick= "copiarTarea(this.closest('li'))"> 📄</button>
     <button onclick= "compartirTarea(this)"> ↗ </button>
     `;
   lista.prepend(nuevoLi);
-  console.log(geo);
-//una vez q genera en el DOM lo guarda en array 
-  
-  //una vez q agregue lo mando al localStorage
-  
   input.value="";
-
   if(v){
-    tareas.push({
+      tareas.push({
       id : time,
       "texto": texto, //texto es el parametro de agregar
       "completado": false,
@@ -69,14 +53,7 @@ function agregarTarea(texto,v){
    window.localStorage.setItem("tareas", JSON.stringify(tareas));
  }
  
- /*function eliminarTarea(e) {
-  e.parentElement.remove(); //Nodo.parentElement devuelve el nodo padre del DOM y remove elimina
-  let idA= e.closest("li").dataset.id;
-  tareas = tareas.filter(tarea => tarea.id != idA);
-  
-  console.log(tareas);
-  guardarLocal();
-}*/
+
 function eliminarTarea(nuevoLi) {
   nuevoLi.parentElement.remove();
   tareas.splice(tareas.findIndex(a => a.id == nuevoLi.id), 1) 
@@ -84,20 +61,11 @@ function eliminarTarea(nuevoLi) {
 }
 //checkbox
 const funcionCheck = (e) =>{
-  index = tareas.findIndex(tareas => tareas.id == e.target.parentElement.dataset.id);
+  let index = tareas.findIndex(tareas => tareas.id == e.target.parentElement.dataset.id);
   tareas[index].completado = !tareas[index].completado; 
-  localstorage.setItem('tareas', JSON.stringify(tareas));
+  //localstorage.setItem('tareas', JSON.stringify(tareas));
   guardarLocal();
 }
-/*const funcionCheck = (e) =>{
-  e.classList.toggle('checked');
-  nuevoLi = e.closest('li');
-  index = tareas.findIndex(a => a.id == nuevoLi.id)
-  tareas[index].completado = tareas[index].completado ? false : true
-  guardarLocal();
-}*/
-
-
 
 
 function copiarTarea(e){
